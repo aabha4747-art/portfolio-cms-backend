@@ -5,6 +5,8 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const pool = require("./src/config/db");
+const authRoutes = require("./src/routes/authRoutes");
+const { protect } = require("./src/middleware/authMiddleware");
 
 const app = express();
 
@@ -24,6 +26,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Request logging
 app.use(morgan("dev"));
+// API routes
+app.use("/api/auth", authRoutes);
 
 // Main test route
 app.get("/", (req, res) => {
@@ -87,6 +91,14 @@ app.get("/api/db-tables", async (req, res) => {
       message: "Unable to retrieve database tables",
     });
   }
+});
+
+app.get("/api/admin/test", protect, (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Protected admin route accessed successfully",
+    user: req.user,
+  });
 });
 
 app.listen(PORT, () => {
