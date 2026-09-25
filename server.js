@@ -14,6 +14,7 @@ const githubRoutes = require("./src/routes/githubRoutes");
 const experienceRoutes = require("./src/routes/experienceRoutes");
 const blogRoutes = require("./src/routes/blogRoutes");
 const testimonialRoutes = require("./src/routes/testimonialRoutes");
+const serviceRoutes = require("./src/routes/serviceRoutes");
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use("/api/github", githubRoutes);
 app.use("/api/experience", experienceRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/testimonials", testimonialRoutes);
+app.use("/api/services", serviceRoutes);
 
 // Main test route
 app.get("/", (req, res) => {
