@@ -7,6 +7,9 @@ const morgan = require("morgan");
 const pool = require("./src/config/db");
 const authRoutes = require("./src/routes/authRoutes");
 const { protect } = require("./src/middleware/authMiddleware");
+const aboutRoutes = require("./src/routes/aboutRoutes");
+const skillRoutes = require("./src/routes/skillRoutes");
+const projectRoutes = require("./src/routes/projectRoutes");
 
 const app = express();
 
@@ -28,6 +31,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 // API routes
 app.use("/api/auth", authRoutes);
+
+app.use("/api/about", aboutRoutes);
+app.use("/api/skills", skillRoutes);
+app.use("/api/projects", projectRoutes);
 
 // Main test route
 app.get("/", (req, res) => {
