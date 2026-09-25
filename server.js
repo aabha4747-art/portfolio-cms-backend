@@ -11,6 +11,7 @@ const aboutRoutes = require("./src/routes/aboutRoutes");
 const skillRoutes = require("./src/routes/skillRoutes");
 const projectRoutes = require("./src/routes/projectRoutes");
 const githubRoutes = require("./src/routes/githubRoutes");
+const experienceRoutes = require("./src/routes/experienceRoutes");
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use("/api/about", aboutRoutes);
 app.use("/api/skills", skillRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/github", githubRoutes);
+app.use("/api/experience", experienceRoutes);
 
 // Main test route
 app.get("/", (req, res) => {
