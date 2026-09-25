@@ -291,19 +291,20 @@ const updateProject = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const existing = await pool.query(
+    // Get the existing project
+    const existingResult = await pool.query(
       "SELECT * FROM projects WHERE id = $1",
       [id]
     );
 
-    if (existing.rows.length === 0) {
+    if (existingResult.rows.length === 0) {
       return res.status(404).json({
         success: false,
         message: "Project not found",
       });
     }
 
-    const current = existing.rows[0];
+    const current = existingResult.rows[0];
 
     const {
       title,
@@ -311,7 +312,6 @@ const updateProject = async (req, res) => {
       short_description,
       full_description,
       category,
-
       thumbnail,
       banner_image,
 
@@ -340,6 +340,44 @@ const updateProject = async (req, res) => {
       display_order,
     } = req.body;
 
+    // Safely prepare JSONB values
+    const prepareJson = (incoming, existing) => {
+      const value = incoming !== undefined ? incoming : existing;
+
+      if (value === null || value === undefined) {
+        return JSON.stringify([]);
+      }
+
+      if (typeof value === "object") {
+        return JSON.stringify(value);
+      }
+
+      if (typeof value === "string") {
+        try {
+          return JSON.stringify(JSON.parse(value));
+        } catch {
+          return JSON.stringify([]);
+        }
+      }
+
+      return JSON.stringify([]);
+    };
+
+    const technologiesJson = prepareJson(
+      technologies,
+      current.technologies
+    );
+
+    const featuresJson = prepareJson(
+      features,
+      current.features
+    );
+
+    const screenshotsJson = prepareJson(
+      screenshots,
+      current.screenshots
+    );
+
     const result = await pool.query(
       `
       UPDATE projects
@@ -349,7 +387,6 @@ const updateProject = async (req, res) => {
         short_description = $3,
         full_description = $4,
         category = $5,
-
         thumbnail = $6,
         banner_image = $7,
 
@@ -369,9 +406,9 @@ const updateProject = async (req, res) => {
         challenges = $19,
         learnings = $20,
 
-        technologies = $21,
-        features = $22,
-        screenshots = $23,
+        technologies = $21::jsonb,
+        features = $22::jsonb,
+        screenshots = $23::jsonb,
 
         featured = $24,
         published = $25,
@@ -389,7 +426,6 @@ const updateProject = async (req, res) => {
         short_description ?? current.short_description,
         full_description ?? current.full_description,
         category ?? current.category,
-
         thumbnail ?? current.thumbnail,
         banner_image ?? current.banner_image,
 
@@ -409,17 +445,9 @@ const updateProject = async (req, res) => {
         challenges ?? current.challenges,
         learnings ?? current.learnings,
 
-        technologies
-          ? JSON.stringify(technologies)
-          : current.technologies,
-
-        features
-          ? JSON.stringify(features)
-          : current.features,
-
-        screenshots
-          ? JSON.stringify(screenshots)
-          : current.screenshots,
+        technologiesJson,
+        featuresJson,
+        screenshotsJson,
 
         featured ?? current.featured,
         published ?? current.published,
