@@ -15,6 +15,7 @@ const experienceRoutes = require("./src/routes/experienceRoutes");
 const blogRoutes = require("./src/routes/blogRoutes");
 const testimonialRoutes = require("./src/routes/testimonialRoutes");
 const serviceRoutes = require("./src/routes/serviceRoutes");
+const mediaRoutes = require("./src/routes/mediaRoutes");
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use("/api/experience", experienceRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/services", serviceRoutes);
+app.use("/api/media", mediaRoutes);
 
 // Main test route
 app.get("/", (req, res) => {
